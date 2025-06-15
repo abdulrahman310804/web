@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Kredit Debitur - BRI</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body { 
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #003d82 0%, #0066cc 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(90deg, #003d82 0%, #0066cc 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+        position: relative;
+      }
+
+      .header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        opacity: 0.3;
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .header .subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        position: relative;
+        z-index: 1;
+      }
+
+      .nav-section {
+        padding: 30px;
+        text-align: center;
+        background: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+      }
+
+      .nav-button {
+        display: inline-block;
+        margin: 0 15px;
+        padding: 15px 30px;
+        background: linear-gradient(45deg, #003d82, #0066cc);
+        color: white;
+        text-decoration: none;
+        border: none;
+        border-radius: 50px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 61, 130, 0.3);
+      }
+
+      .nav-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 61, 130, 0.4);
+        background: linear-gradient(45deg, #0066cc, #0088ff);
+      }
+
+      .nav-button:active {
+        transform: translateY(-1px);
+      }
+
+      .content-section {
+        padding: 40px;
+        min-height: 400px;
+      }
+
+      #formSection, #tableSection { 
+        display: none; 
+      }
+
+      .section-title {
+        color: #003d82;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 30px;
+        text-align: center;
+        position: relative;
+      }
+
+      .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, #003d82, #0066cc);
+        border-radius: 2px;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .form-group label {
+        color: #003d82;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+
+      .form-group input, .form-group select {
+        padding: 12px 15px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        background: white;
+      }
+
+      .form-group input:focus, .form-group select:focus {
+        outline: none;
+        border-color: #0066cc;
+        box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        transform: translateY(-1px);
+      }
+
+      .submit-btn {
+        width: 100%;
+        max-width: 300px;
+        margin: 30px auto 0;
+        display: block;
+        padding: 15px 30px;
+        background: linear-gradient(45deg, #28a745, #20c997);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+      }
+
+      .submit-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+      }
+
+      .submit-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .table-container {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+      }
+
+      .table-wrapper {
+        overflow-x: auto;
+        max-height: 600px;
+        overflow-y: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1200px;
+      }
+
+      th {
+        background: linear-gradient(90deg, #003d82, #0066cc);
+        color: white;
+        padding: 15px 12px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 13px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        white-space: nowrap;
+      }
+
+      td {
+        padding: 12px;
+        border-bottom: 1px solid #e9ecef;
+        font-size: 12px;
+        white-space: nowrap;
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f8f9fa;
+      }
+
+      tr:hover {
+        background-color: #e3f2fd;
+        transform: scale(1.001);
+        transition: all 0.2s ease;
+      }
+
+      .loading, .no-data {
+        text-align: center;
+        padding: 60px 20px;
+        color: #6c757d;
+        font-size: 18px;
+      }
+
+      .loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #0066cc;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      .alert {
+        padding: 15px 20px;
+        margin: 20px 0;
+        border-radius: 8px;
+        font-weight: 500;
+        animation: slideDown 0.3s ease;
+      }
+
+      .alert-success {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+      }
+
+      .alert-error {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+      }
+
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        border-radius: 8px;
+        color: white;
+        z-index: 1000;
+        transform: translateX(400px);
+        transition: all 0.3s ease;
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        max-width: 350px;
+        word-wrap: break-word;
+      }
+
+      .notification.show { 
+        transform: translateX(0); 
+      }
+      
+      .notification.success { 
+        background: linear-gradient(45deg, #4CAF50, #45a049);
+      }
+      
+      .notification.error { 
+        background: linear-gradient(45deg, #f44336, #d32f2f);
+      }
+
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 1.8rem;
+        }
+        
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .nav-button {
+          display: block;
+          margin: 10px auto;
+          width: 200px;
+        }
+        
+        table {
+          font-size: 11px;
+        }
+        
+        th, td {
+          padding: 8px 6px;
+        }
+
+        .notification {
+          right: 10px;
+          left: 10px;
+          max-width: none;
+          transform: translateY(-100px);
+        }
+
+        .notification.show {
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>📊 SISTEM DATA KREDIT DEBITUR</h1>
+        <div class="subtitle">Bank Rakyat Indonesia - Manajemen Dokumen Kredit</div>
+      </div>
+
+      <div class="nav-section">
+        <button class="nav-button" onclick="tampilkan('form')">
+          ➕ Tambah Data Baru
+        </button>
+        <button class="nav-button" onclick="tampilkan('tabel')">
+          📋 Lihat Semua Data
+        </button>
+      </div>
+
+      <div class="content-section">
+        <section id="formSection">
+          <h2 class="section-title">Form Input Data Kredit</h2>
+          <form id="form">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="No">No. Urut *</label>
+                <input id="No" name="No" type="number" placeholder="Masukkan nomor urut" required>
+              </div>
+              <div class="form-group">
+                <label for="KodeBranch">Kode Branch</label>
+                <input id="KodeBranch" name="KodeBranch" placeholder="Contoh: 0285">
+              </div>
+              <div class="form-group">
+                <label for="NamaDebitur">Nama Debitur</label>
+                <input id="NamaDebitur" name="NamaDebitur" placeholder="Nama lengkap debitur">
+              </div>
+              <div class="form-group">
+                <label for="CIF">CIF</label>
+                <input id="CIF" name="CIF" placeholder="Customer Information File">
+              </div>
+              <div class="form-group">
+                <label for="NoRekFasilitas">No. Rekening Fasilitas</label>
+                <input id="NoRekFasilitas" name="NoRekFasilitas" placeholder="Nomor rekening fasilitas">
+              </div>
+              <div class="form-group">
+                <label for="FasilitasKredit">Fasilitas Kredit</label>
+                <input id="FasilitasKredit" name="FasilitasKredit" placeholder="Contoh: BRIGUNA">
+              </div>
+              <div class="form-group">
+                <label for="JatuhTempoFasilitas">Jatuh Tempo Fasilitas</label>
+                <input id="JatuhTempoFasilitas" name="JatuhTempoFasilitas" type="date">
+              </div>
+              <div class="form-group">
+                <label for="Plafond">Plafond</label>
+                <input id="Plafond" name="Plafond" placeholder="Jumlah plafond kredit">
+              </div>
+              <div class="form-group">
+                <label for="NoPerjanjian">No. Perjanjian</label>
+                <input id="NoPerjanjian" name="NoPerjanjian" placeholder="Nomor perjanjian kredit">
+              </div>
+              <div class="form-group">
+                <label for="TanggalPerjanjian">Tanggal Perjanjian</label>
+                <input id="TanggalPerjanjian" name="TanggalPerjanjian" type="date">
+              </div>
+              <div class="form-group">
+                <label for="JenisDokAgunan">Jenis Dokumen Agunan</label>
+                <input id="JenisDokAgunan" name="JenisDokAgunan" placeholder="Contoh: SK">
+              </div>
+              <div class="form-group">
+                <label for="NoDokAgunan">No. Dokumen Agunan</label>
+                <input id="NoDokAgunan" name="NoDokAgunan" placeholder="Nomor dokumen agunan">
+              </div>
+              <div class="form-group">
+                <label for="TglJatuhTempoAgunan">Tanggal Jatuh Tempo Agunan</label>
+                <input id="TglJatuhTempoAgunan" name="TglJatuhTempoAgunan" type="date">
+              </div>
+              <div class="form-group">
+                <label for="NilaiAgunan">Nilai Agunan</label>
+                <input id="NilaiAgunan" name="NilaiAgunan" placeholder="Nilai agunan">
+              </div>
+              <div class="form-group">
+                <label for="PenyimpananAgunan">Penyimpanan Agunan</label>
+                <input id="PenyimpananAgunan" name="PenyimpananAgunan" placeholder="Contoh: tahan api">
+              </div>
+              <div class="form-group">
+                <label for="KetAgunan">Keterangan Agunan</label>
+                <input id="KetAgunan" name="KetAgunan" placeholder="Keterangan agunan">
+              </div>
+              <div class="form-group">
+                <label for="NoCoverNote1">No. Cover Note 1</label>
+                <input id="NoCoverNote1" name="NoCoverNote1" placeholder="Nomor cover note 1">
+              </div>
+              <div class="form-group">
+                <label for="TglCoverNote1">Tanggal Cover Note 1</label>
+                <input id="TglCoverNote1" name="TglCoverNote1" type="date">
+              </div>
+              <div class="form-group">
+                <label for="JenisPengikatan">Jenis Pengikatan</label>
+                <input id="JenisPengikatan" name="JenisPengikatan" placeholder="Jenis pengikatan">
+              </div>
+              <div class="form-group">
+                <label for="NoDokPengikatan">No. Dokumen Pengikatan</label>
+                <input id="NoDokPengikatan" name="NoDokPengikatan" placeholder="Nomor dokumen pengikatan">
+              </div>
+              <div class="form-group">
+                <label for="NilaiPengikatan">Nilai Pengikatan</label>
+                <input id="NilaiPengikatan" name="NilaiPengikatan" placeholder="Nilai pengikatan">
+              </div>
+              <div class="form-group">
+                <label for="PenyimpananPengikatan">Penyimpanan Pengikatan</label>
+                <input id="PenyimpananPengikatan" name="PenyimpananPengikatan" placeholder="Penyimpanan pengikatan">
+              </div>
+              <div class="form-group">
+                <label for="KetPengikatan">Keterangan Pengikatan</label>
+                <input id="KetPengikatan" name="KetPengikatan" placeholder="Keterangan pengikatan">
+              </div>
+              <div class="form-group">
+                <label for="NoCoverNote2">No. Cover Note 2</label>
+                <input id="NoCoverNote2" name="NoCoverNote2" placeholder="Nomor cover note 2">
+              </div>
+              <div class="form-group">
+                <label for="TglCoverNote2">Tanggal Cover Note 2</label>
+                <input id="TglCoverNote2" name="TglCoverNote2" type="date">
+              </div>
+              <div class="form-group">
+                <label for="Ruang">Ruang</label>
+                <input id="Ruang" name="Ruang" placeholder="Contoh: P">
+              </div>
+              <div class="form-group">
+                <label for="Lemari">Lemari</label>
+                <input id="Lemari" name="Lemari" placeholder="Contoh: 4">
+              </div>
+              <div class="form-group">
+                <label for="Rak">Rak</label>
+                <input id="Rak" name="Rak" placeholder="Contoh: 29">
+              </div>
+              <div class="form-group">
+                <label for="Baris">Baris</label>
+                <input id="Baris" name="Baris" placeholder="Nomor baris">
+              </div>
+            </div>
+            <button type="submit" class="submit-btn">💾 Simpan Data</button>
+          </form>
+        </section>
+
+        <section id="tableSection">
+          <h2 class="section-title">Data Kredit Debitur</h2>
+          
+          <div id="loadingDiv" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <div>Memuat data...</div>
+          </div>
+          
+          <div class="table-container" id="tableContainer" style="display: none;">
+            <div class="table-wrapper">
+              <table id="tabelData">
+                <thead id="tabelHeader"></thead>
+                <tbody id="tabelBody"></tbody>
+              </table>
+            </div>
+          </div>
+          
+          <div id="noDataDiv" class="no-data" style="display: none;">
+            📂 Belum ada data tersedia
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script>
+      // Urutan kolom sesuai dengan sheet
+      const COLUMN_ORDER = [
+        'No', 'KodeBranch', 'NamaDebitur', 'CIF', 'NoRekFasilitas', 
+        'FasilitasKredit', 'JatuhTempoFasilitas', 'Plafond', 'NoPerjanjian', 
+        'TanggalPerjanjian', 'JenisDokAgunan', 'NoDokAgunan', 'TglJatuhTempoAgunan', 
+        'NilaiAgunan', 'PenyimpananAgunan', 'KetAgunan', 'NoCoverNote1', 
+        'TglCoverNote1', 'JenisPengikatan', 'NoDokPengikatan', 'NilaiPengikatan', 
+        'PenyimpananPengikatan', 'KetPengikatan', 'NoCoverNote2', 'TglCoverNote2', 
+        'Ruang', 'Lemari', 'Rak', 'Baris'
+      ];
+
+      const form = document.getElementById("form");
+      const tabelHeader = document.getElementById("tabelHeader");
+      const tabelBody = document.getElementById("tabelBody");
+      const formSection = document.getElementById("formSection");
+      const tableSection = document.getElementById("tableSection");
+      const loadingDiv = document.getElementById("loadingDiv");
+      const tableContainer = document.getElementById("tableContainer");
+      const noDataDiv = document.getElementById("noDataDiv");
+
+      function tampilkan(menu) {
+        if (menu === "form") {
+          formSection.style.display = "block";
+          tableSection.style.display = "none";
+        } else {
+          formSection.style.display = "none";
+          tableSection.style.display = "block";
+          muatData();
+        }
+      }
+
+      function buatTabel(data) {
+        console.log("Data received:", data);
+        
+        loadingDiv.style.display = "none";
+        
+        if (!data || data.length === 0) {
+          tableContainer.style.display = "none";
+          noDataDiv.style.display = "block";
+          return;
+        }
+
+        noDataDiv.style.display = "none";
+        tableContainer.style.display = "block";
+
+        // Buat header sesuai urutan yang ditentukan
+        tabelHeader.innerHTML = "<tr>" + 
+          COLUMN_ORDER.map(col => `<th>${col}</th>`).join("") + 
+          "</tr>";
+        
+        // Buat body sesuai urutan kolom
+        tabelBody.innerHTML = data.map((row, index) => {
+          const cells = COLUMN_ORDER.map(col => {
+            const value = row[col] || '';
+            return `<td title="${value}">${value}</td>`;
+          }).join("");
+          return `<tr>${cells}</tr>`;
+        }).join("");
+      }
+
+      function handleError(error) {
+        console.error("Error:", error);
+        loadingDiv.style.display = "none";
+        tableContainer.style.display = "none";
+        noDataDiv.innerHTML = `<div class="alert alert-error">❌ Terjadi kesalahan: ${error}</div>`;
+        noDataDiv.style.display = "block";
+      }
+
+      function showNotification(message, type, timestamp) {
+        // Remove existing notifications
+        const existingNotifications = document.querySelectorAll('.notification');
+        existingNotifications.forEach(notif => notif.remove());
+
+        // Create new notification
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `${type === 'success' ? '✅' : '❌'} ${message}`;
+        
+        if (timestamp) {
+          notification.innerHTML += `<br><small>${timestamp}</small>`;
+        }
+        
+        document.body.appendChild(notification);
+        
+        // Show notification with animation
+        setTimeout(() => notification.classList.add('show'), 100);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+          notification.classList.remove('show');
+          setTimeout(() => {
+            if (notification.parentNode) {
+              notification.remove();
+            }
+          }, 300);
+        }, 5000);
+      }
+
+      function showSuccess(message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-success';
+        alertDiv.innerHTML = `✅ ${message}`;
+        
+        const formSection = document.getElementById('formSection');
+        formSection.insertBefore(alertDiv, formSection.firstChild);
+        
+        setTimeout(() => {
+          if (alertDiv.parentNode) {
+            alertDiv.parentNode.removeChild(alertDiv);
+          }
+        }, 5000);
+      }
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        
+        const formData = new FormData(form);
+        const data = {};
+        
+        // Convert FormData to object
+        for (let [key, value] of formData.entries()) {
+          data[key] = value.trim();
+        }
+        
+        console.log("Sending data:", data);
+        
+        // Disable submit button
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = "⏳ Menyimpan...";
+        submitBtn.disabled = true;
+        
+        // Call Google Apps Script function
+        google.script.run
+          .withSuccessHandler(function(result) {
+            console.log("Success handler called:", result);
+            
+            // Re-enable submit button
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+            
+            if (result && result.success) {
+              showNotification(result.message, 'success', result.timestamp);
+              form.reset(); // Reset form on success
+            } else {
+              const errorMessage = result && result.message ? result.message : "Terjadi kesalahan yang tidak diketahui";
+              showNotification(errorMessage, 'error', result ? result.timestamp : null);
+            }
+          })
+          .withFailureHandler(function(error) {
+            console.error("Failure handler called:", error);
+            
+            // Re-enable submit button
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+            
+            showNotification("Gagal menyimpan data: " + error.message, 'error');
+          })
+          .simpanData(data);
+      });
+      
+      function muatData() {
+        console.log("Loading data...");
+        loadingDiv.style.display = "flex";
+        tableContainer.style.display = "none";
+        noDataDiv.style.display = "none";
+        
+        google.script.run
+          .withSuccessHandler(buatTabel)
+          .withFailureHandler(handleError)
+          .getData();
+      }
+
+      // Initialize
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log("DOM loaded - BRI Credit Data System");
+        // Show form by default
+        tampilkan('form');
+      });
+    </script>
+  </body>
+</html>
